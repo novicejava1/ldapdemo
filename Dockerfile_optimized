@@ -1,0 +1,13 @@
+# Stage 1: Build environment
+FROM openjdk:17-jdk-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN ./gradlew build
+
+# Stage 2: Runtime environment
+FROM openjdk:17-jdk-alpine AS runtime
+WORKDIR /app  
+#  Copy application artifacts from the build stage (e.g., JAR file)
+COPY --from=builder /app/build/libs/*.jar /app/ldapdemo.jar
+# Define runtime configuration (e.g., CMD, ENTRYPOINT)
+ENTRYPOINT ["java","-jar","/app/ldapdemo.jar"]
